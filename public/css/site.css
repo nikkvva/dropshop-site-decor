@@ -1,0 +1,8 @@
+/* Наши правки поверх стилей шаблона Bazaro (сам шаблон в public/bazaro не меняем). */
+
+/* Фото поставщика разных пропорций: вписываем в квадрат, чтобы карточки были одной высоты */
+.aq-product-thumb img.aq-product-img {
+   aspect-ratio: 1 / 1;
+   object-fit: contain;
+   background: #fff;
+}

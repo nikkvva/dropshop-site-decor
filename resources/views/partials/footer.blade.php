@@ -33,11 +33,13 @@
                </div>
                <div class="col-lg-4 col-sm-6">
                   <div class="aq-footer-widget mb-90">
-                     <h4 class="aq-footer-widget-title">Графік роботи</h4>
+                     <h4 class="aq-footer-widget-title">Доставка</h4>
                      <div class="aq-footer-widget-menu">
                         <ul>
-                           <li>Замовлення на сайті — цілодобово</li>
-                           <li>Відповідаємо щодня з 9:00 до 20:00</li>
+                           <li>Нова пошта по всій Україні</li>
+                           <li>Відправка за 1–3 робочі дні</li>
+                           <li>Посилка чекає у відділенні 7 днів</li>
+                           <li>Оплата при отриманні</li>
                         </ul>
                      </div>
                   </div>
@@ -48,17 +50,8 @@
       <div class="aq-copyright-area">
          <div class="container">
             <div class="aq-copyright-border pt-15 pb-15">
-               <div class="row align-items-center">
-                  <div class="col-md-6">
-                     <div class="aq-copyright-text text-center text-md-start pb-20">
-                        <p class="mb-0">© {{ date('Y') }} {{ config('app.name') }}</p>
-                     </div>
-                  </div>
-                  <div class="col-md-6">
-                     <div class="aq-copyright-payment text-center text-md-end pb-20">
-                        <img src="{{ asset('bazaro/img/payment/payment.png') }}" alt="Способи оплати">
-                     </div>
-                  </div>
+               <div class="aq-copyright-text text-center text-md-start pb-20">
+                  <p class="mb-0">© {{ date('Y') }} {{ config('app.name') }}</p>
                </div>
             </div>
          </div>

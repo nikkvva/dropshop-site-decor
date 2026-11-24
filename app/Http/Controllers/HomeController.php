@@ -9,6 +9,9 @@ class HomeController extends Controller
 {
     public function __invoke()
     {
+        // последние добавленные
+        $arrivals = Product::available()->latest('id')->limit(8)->get();
+
         return view('home', [
             // самые большие скидки
             'deals' => Product::available()
@@ -16,10 +19,9 @@ class HomeController extends Controller
                 ->orderByRaw('(old_price - price) / old_price desc')
                 ->limit(6)
                 ->get(),
-            // последние добавленные
-            'arrivals' => Product::available()->latest('id')->limit(8)->get(),
-            // самый дорогой — как «флагман» витрины
-            'featured' => Product::available()->orderByDesc('price')->first(),
+            'arrivals' => $arrivals,
+            // самый дорогой — как «флагман» витрины; не повторяем товар из «Новинок»
+            'featured' => Product::available()->whereNotIn('id', $arrivals->pluck('id'))->orderByDesc('price')->first(),
         ]);
     }
 }

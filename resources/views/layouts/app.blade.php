@@ -10,6 +10,7 @@
    @foreach (['bootstrap', 'animate', 'nice-select', 'custom-animation', 'swiper-bundle', 'magnific-popup', 'font-awesome-pro', 'spacing', 'main'] as $css)
       <link rel="stylesheet" href="{{ asset("bazaro/css/$css.css") }}">
    @endforeach
+   <link rel="stylesheet" href="{{ asset('css/site.css') }}">
 </head>
 <body>
 

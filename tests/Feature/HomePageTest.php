@@ -33,6 +33,13 @@ class HomePageTest extends TestCase
             ->assertDontSee('Знятий з продажу');
     }
 
+    public function test_discount_only_when_old_price_is_higher(): void
+    {
+        $this->assertSame(25, $this->product(1)->discount());
+        $this->assertNull($this->product(2, ['old_price' => null])->discount());
+        $this->assertNull($this->product(3, ['old_price' => 500])->discount());
+    }
+
     public function test_it_works_without_products(): void
     {
         $this->get('/')->assertOk();
