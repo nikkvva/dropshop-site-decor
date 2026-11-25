@@ -6,3 +6,14 @@
    object-fit: contain;
    background: #fff;
 }
+
+/* Страница товара */
+.site-out-of-stock { color: #b42318; font-weight: 500; }
+.site-sku { color: #777; font-size: 14px; }
+.site-variants img { width: 64px; height: 64px; object-fit: contain; border: 1px solid #e5e5e5; border-radius: 6px; background: #fff; }
+.site-variants a:hover img { border-color: #111; }
+.site-description ul { list-style: disc; padding-left: 20px; margin-bottom: 15px; }
+.site-description p { margin-bottom: 10px; }
+.aq-product-details-add-to-cart-btn button:disabled { opacity: .6; cursor: not-allowed; }
+/* На телефоне миниатюры галереи съедают экран — листаем стрелками большого фото */
+@media (max-width: 1199px) { .product-slider-nav { display: none; } }

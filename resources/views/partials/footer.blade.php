@@ -24,9 +24,9 @@
                      <h4 class="aq-footer-widget-title">Покупцям</h4>
                      <div class="aq-footer-widget-menu">
                         <ul>
-                           <li><a href="#">Каталог</a></li>
-                           <li><a href="#delivery">Доставка і оплата</a></li>
-                           <li><a href="#delivery">Обмін і повернення</a></li>
+                           <li><a href="{{ route('catalog') }}">Каталог</a></li>
+                           <li><a href="{{ route('home') }}#delivery">Доставка і оплата</a></li>
+                           <li><a href="{{ route('home') }}#delivery">Обмін і повернення</a></li>
                         </ul>
                      </div>
                   </div>

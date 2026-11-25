@@ -21,6 +21,8 @@
 
 @section('content')
 
+   <h1 class="visually-hidden">Аксесуари для смартфонів з доставкою по Україні</h1>
+
    {{-- Слайдер --}}
    <div class="elt-slider-area p-relative mb-60 fix">
       <div class="elt-slider-arrow">
@@ -40,7 +42,7 @@
                         <span class="aq-section-subtitle ff-satoshi-reg mb-15">{{ $slide['label'] }}</span>
                         <h3 class="aq-section-title ff-onest-bold fs-56 mb-30">{!! $slide['title'] !!}</h3>
                         <span class="elt-slider-price mb-40">{{ $slide['note'] }}</span>
-                        <a class="aq-btn-black radius-30" href="#">До каталогу</a>
+                        <a class="aq-btn-black radius-30" href="{{ route('catalog') }}">До каталогу</a>
                      </div>
                   </div>
                </div>
@@ -82,7 +84,7 @@
                   <div class="col-lg-6">
                      <div class="aq-product-3-top-right d-flex justify-content-center justify-content-lg-end align-items-center">
                         <div class="aq-product-3-top-btn">
-                           <a class="aq-btn-link aq-btn-underline" href="#">Усі товари <span>{!! $arrow !!}</span></a>
+                           <a class="aq-btn-link aq-btn-underline" href="{{ route('catalog', ['sort' => 'discount']) }}">Усі товари <span>{!! $arrow !!}</span></a>
                         </div>
                      </div>
                   </div>
@@ -101,7 +103,7 @@
                               @if ($product->vendor)
                                  <span class="aq-product-category">{{ $product->vendor }}</span>
                               @endif
-                              <h4 class="aq-product-title ff-onest fs-18 mb-10"><a href="#">{{ $product->name }}</a></h4>
+                              <h4 class="aq-product-title ff-onest fs-18 mb-10"><a href="{{ route('product', $product) }}">{{ $product->name }}</a></h4>
                               <div class="aq-product-price">
                                  <ins><span class="aq-product-new-price">{{ $product::money($product->price) }}</span></ins>
                                  <del><span class="aq-product-old-price">{{ $product::money($product->old_price) }}</span></del>
@@ -129,7 +131,7 @@
                      <div class="aqf-banner-2-content text-center">
                         <span class="aq-section-subtitle mb-15">{{ $label }}</span>
                         <h4 class="aq-section-title ff-onest-bold fs-36 mb-25">{{ $title }}</h4>
-                        <a class="aq-btn-black radius-30" href="#">Дивитися</a>
+                        <a class="aq-btn-black radius-30" href="{{ route('catalog') }}">Дивитися</a>
                      </div>
                   </div>
                </div>
@@ -150,7 +152,7 @@
                </div>
                <div class="col-md-6">
                   <div class="elt-arrival-top-btn text-center text-md-end">
-                     <a class="aq-btn-link aq-btn-underline" href="#">Усі товари <span>{!! $arrow !!}</span></a>
+                     <a class="aq-btn-link aq-btn-underline" href="{{ route('catalog') }}">Усі товари <span>{!! $arrow !!}</span></a>
                   </div>
                </div>
             </div>
@@ -186,7 +188,7 @@
                               <del class="ms-2"><span class="aq-product-details-price old-price">{{ $featured::money($featured->old_price) }}</span></del>
                            @endif
                         </div>
-                        <a class="aq-btn-black radius-30" href="#">Детальніше</a>
+                        <a class="aq-btn-black radius-30" href="{{ route('product', $featured) }}">Детальніше</a>
                      </div>
                   </div>
                </div>

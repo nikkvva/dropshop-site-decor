@@ -6,8 +6,8 @@
    ];
    $menu = [
       'Головна' => route('home'),
-      'Каталог' => '#',            // 4.3
-      'Доставка і оплата' => '#delivery',
+      'Каталог' => route('catalog'),
+      'Доставка і оплата' => route('home').'#delivery',
       'Контакти' => '#contacts',
    ];
 @endphp
