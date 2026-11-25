@@ -175,7 +175,7 @@
                               @if ($product->vendor)
                                  <tr><td>Бренд</td><td>{{ $product->vendor }}</td></tr>
                               @endif
-                              @foreach ($product->params ?? [] as $name => $value)
+                              @foreach ($product->paramsUk() as $name => $value)
                                  <tr><td>{{ $name }}</td><td>{{ $value }}</td></tr>
                               @endforeach
                            </tbody>

@@ -17,7 +17,7 @@ class ProductPageTest extends TestCase
             'core_id' => $id, 'slug' => 'p-'.$id, 'name' => 'Товар '.$id,
             'price' => 750, 'old_price' => 1000, 'is_available' => true,
             'vendor' => 'Remax', 'vendor_code' => 'RM-'.$id,
-            'params' => ['Колір' => 'Білий'],
+            'params' => ['Цвет' => 'Белый', 'Модель' => 'X1'],
             'pictures' => ['https://img.test/'.$id.'.jpg'],
             'description' => '<p>Опис товару</p>',
         ], $override));
@@ -32,7 +32,10 @@ class ProductPageTest extends TestCase
             ->assertSee('<h1 class="aq-product-details-title mb-10">Павербанк Remax 20000</h1>', false)
             ->assertSee('750 ₴')
             ->assertSee('1 000 ₴')
-            ->assertSee('Білий')
+            // характеристики переведены словарём, незнакомые — как есть
+            ->assertSee('<td>Колір</td><td>Білий</td>', false)
+            ->assertSee('<td>Модель</td><td>X1</td>', false)
+            ->assertDontSee('Белый')
             ->assertSee('В наявності')
             ->assertSee('<meta property="og:image" content="https://img.test/1.jpg">', false)
             ->assertSee('"@type":"Product"', false)

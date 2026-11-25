@@ -44,6 +44,18 @@ class Product extends Model
         return preg_replace('/<(\w+)\b[^>]*>/', '<$1>', $html);
     }
 
+    /** Характеристики на украинском: словарь config/params_uk.php, неизвестное — как есть. */
+    public function paramsUk(): array
+    {
+        $dict = config('params_uk');
+        $result = [];
+        foreach ($this->params ?? [] as $name => $value) {
+            $result[$dict['keys'][$name] ?? $name] = is_string($value) ? ($dict['values'][$value] ?? $value) : $value;
+        }
+
+        return $result;
+    }
+
     /** Короткий текст для meta description: описание без тегов, до 160 символов. */
     public function metaDescription(): string
     {
