@@ -70,53 +70,7 @@
       </div>
    </div>
 
-   {{-- Акции: самые большие скидки --}}
-   @if ($deals->isNotEmpty())
-      <div class="aq-product-3-area pt-100 pb-120">
-         <div class="container">
-            <div class="aq-product-3-top mb-35">
-               <div class="row">
-                  <div class="col-lg-6">
-                     <div class="aq-product-3-title-box text-center text-lg-start">
-                        <h2 class="aq-section-title ff-onest-bold fs-36">Найкращі знижки</h2>
-                     </div>
-                  </div>
-                  <div class="col-lg-6">
-                     <div class="aq-product-3-top-right d-flex justify-content-center justify-content-lg-end align-items-center">
-                        <div class="aq-product-3-top-btn">
-                           <a class="aq-btn-link aq-btn-underline" href="{{ route('catalog', ['sort' => 'discount']) }}">Усі товари <span>{!! $arrow !!}</span></a>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </div>
-            <div class="aq-product-3-wrap">
-               <div class="row gx-5 row-cols-xxl-3 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-2 row-cols-1">
-                  @foreach ($deals as $product)
-                     <div class="col">
-                        <div class="aq-product-3-item d-flex align-items-center mb-5">
-                           <div class="aq-product-3-thumb p-relative">
-                              <img src="{{ $product->image() }}" alt="{{ $product->name }}" loading="lazy">
-                              <div class="aq-product-badge"><span class="clr-sale">-{{ $product->discount() }}%</span></div>
-                           </div>
-                           <div class="aq-product-content aq-product-3-content">
-                              @if ($product->vendor)
-                                 <span class="aq-product-category">{{ $product->vendor }}</span>
-                              @endif
-                              <h4 class="aq-product-title ff-onest fs-18 mb-10"><a href="{{ route('product', $product) }}">{{ $product->name }}</a></h4>
-                              <div class="aq-product-price">
-                                 <ins><span class="aq-product-new-price">{{ $product::money($product->price) }}</span></ins>
-                                 <del><span class="aq-product-old-price">{{ $product::money($product->old_price) }}</span></del>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                  @endforeach
-               </div>
-            </div>
-         </div>
-      </div>
-   @endif
+   {{-- Здесь был блок «Найкращі знижки» — убран, что ставить вместо него, решаем позже (см. CLAUDE.md, 4.6) --}}
 
    {{-- Баннеры --}}
    <div class="aqf-banner-2-area elt-banner-style-3 mb-100">
@@ -184,9 +138,6 @@
                         <h3 class="aq-product-details-title mb-10">{{ $featured->name }}</h3>
                         <div class="aq-product-details-price-wrap mb-30">
                            <ins><span class="aq-product-details-price new-price">{{ $featured::money($featured->price) }}</span></ins>
-                           @if ($featured->discount())
-                              <del class="ms-2"><span class="aq-product-details-price old-price">{{ $featured::money($featured->old_price) }}</span></del>
-                           @endif
                         </div>
                         <a class="aq-btn-black radius-30" href="{{ route('product', $featured) }}">Детальніше</a>
                      </div>

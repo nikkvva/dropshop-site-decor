@@ -33,18 +33,17 @@ class CatalogPageTest extends TestCase
             ->assertDontSee('Знятий з продажу');
     }
 
-    public function test_it_sorts_by_price_and_discount(): void
+    public function test_it_sorts_by_price(): void
     {
         $this->product(1, ['name' => 'Середній', 'price' => 500]);
         $this->product(2, ['name' => 'Дешевий', 'price' => 100]);
-        $this->product(3, ['name' => 'Дорогий', 'price' => 900, 'old_price' => 1000]);   // -10%
-        $this->product(4, ['name' => 'Акційний', 'price' => 600, 'old_price' => 1200]);  // -50%
+        $this->product(3, ['name' => 'Дорогий', 'price' => 900, 'old_price' => 1000]);
+        $this->product(4, ['name' => 'Акційний', 'price' => 600, 'old_price' => 1200]);
 
         $this->get('/catalog?sort=cheap')->assertSeeInOrder(['Дешевий', 'Середній', 'Акційний', 'Дорогий']);
         $this->get('/catalog?sort=expensive')->assertSeeInOrder(['Дорогий', 'Акційний', 'Середній', 'Дешевий']);
-        $this->get('/catalog?sort=discount')->assertSeeInOrder(['Акційний', 'Дорогий']);
-        // неизвестная сортировка — не ошибка, а «новинки»
-        $this->get('/catalog?sort=hack')->assertOk()->assertSeeInOrder(['Акційний', 'Дорогий', 'Дешевий']);
+        // неизвестная сортировка (в т.ч. старая ?sort=discount) — не ошибка, а «новинки»
+        $this->get('/catalog?sort=discount')->assertOk()->assertSeeInOrder(['Акційний', 'Дорогий', 'Дешевий']);
     }
 
     public function test_it_paginates_by_24_and_keeps_sort_out_of_canonical(): void

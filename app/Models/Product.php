@@ -64,16 +64,6 @@ class Product extends Model
         return Str::limit($text ?: $this->name, 157);
     }
 
-    /** Скидка в процентах, если старая цена выше текущей, иначе null. */
-    public function discount(): ?int
-    {
-        if (! $this->old_price || $this->old_price <= $this->price) {
-            return null;
-        }
-
-        return (int) round(($this->old_price - $this->price) / $this->old_price * 100);
-    }
-
     /** Цена для показа: 1 250 ₴ */
     public static function money($value): string
     {

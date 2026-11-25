@@ -6,7 +6,7 @@ use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-/** Главная показывает только товары в наличии. */
+/** Главная показывает только товары в наличии и без зачёркнутой цены поставщика. */
 class HomePageTest extends TestCase
 {
     use RefreshDatabase;
@@ -20,7 +20,7 @@ class HomePageTest extends TestCase
         ], $override));
     }
 
-    public function test_it_shows_available_products_with_discount(): void
+    public function test_it_shows_available_products_without_old_price(): void
     {
         $this->product(1, ['name' => 'Павербанк Remax']);
         $this->product(2, ['name' => 'Знятий з продажу', 'is_available' => false]);
@@ -29,15 +29,10 @@ class HomePageTest extends TestCase
             ->assertOk()
             ->assertSee('Павербанк Remax')
             ->assertSee('750 ₴')
-            ->assertSee('-25%')
+            // старая цена поставщика есть у всех товаров — это не настоящая скидка, не показываем
+            ->assertDontSee('1 000 ₴')
+            ->assertDontSee('-25%')
             ->assertDontSee('Знятий з продажу');
-    }
-
-    public function test_discount_only_when_old_price_is_higher(): void
-    {
-        $this->assertSame(25, $this->product(1)->discount());
-        $this->assertNull($this->product(2, ['old_price' => null])->discount());
-        $this->assertNull($this->product(3, ['old_price' => 500])->discount());
     }
 
     public function test_it_works_without_products(): void

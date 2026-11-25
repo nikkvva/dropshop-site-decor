@@ -13,7 +13,6 @@ class CatalogController extends Controller
         'new' => 'Новинки',
         'cheap' => 'Спочатку дешевші',
         'expensive' => 'Спочатку дорожчі',
-        'discount' => 'Найбільша знижка',
     ];
 
     public function __invoke(Request $request)
@@ -25,8 +24,6 @@ class CatalogController extends Controller
         match ($sort) {
             'cheap' => $query->orderBy('price'),
             'expensive' => $query->orderByDesc('price'),
-            // товары без скидки — в конце; * 1.0 — чтобы SQLite в тестах не делил нацело
-            'discount' => $query->orderByRaw('case when old_price > price then (old_price - price) * 1.0 / old_price else 0 end desc'),
             default => $query->latest('id'),
         };
 

@@ -102,9 +102,6 @@
 
                   <div class="aq-product-details-price-wrap mb-25">
                      <ins><span class="aq-product-details-price new-price">{{ $product::money($product->price) }}</span></ins>
-                     @if ($product->discount())
-                        <del class="ms-2"><span class="aq-product-details-price old-price">{{ $product::money($product->old_price) }}</span></del>
-                     @endif
                   </div>
 
                   @if ($variants->isNotEmpty())

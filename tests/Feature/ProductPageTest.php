@@ -31,7 +31,7 @@ class ProductPageTest extends TestCase
             ->assertOk()
             ->assertSee('<h1 class="aq-product-details-title mb-10">Павербанк Remax 20000</h1>', false)
             ->assertSee('750 ₴')
-            ->assertSee('1 000 ₴')
+            ->assertDontSee('1 000 ₴') // старую цену поставщика не показываем
             // характеристики переведены словарём, незнакомые — как есть
             ->assertSee('<td>Колір</td><td>Білий</td>', false)
             ->assertSee('<td>Модель</td><td>X1</td>', false)
