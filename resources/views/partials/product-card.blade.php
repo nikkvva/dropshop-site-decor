@@ -10,5 +10,11 @@
       <div class="aq-product-price">
          <ins><span class="aq-product-new-price">{{ $product::money($product->price) }}</span></ins>
       </div>
+      @if ($product->is_available)
+         <form method="POST" action="{{ route('cart.add', $product) }}" class="site-card-form">
+            @csrf
+            <button type="submit" class="site-card-buy">До кошика</button>
+         </form>
+      @endif
    </div>
 </div>

@@ -36,5 +36,6 @@
    @foreach (['vendor/jquery', 'bootstrap-bundle', 'swiper-bundle', 'slick.min', 'magnific-popup', 'nice-select', 'purecounter', 'isotope-pkgd', 'lazysize.min', 'slider-active', 'imagesloaded-pkgd', 'main'] as $js)
       <script src="{{ asset("bazaro/js/$js.js") }}"></script>
    @endforeach
+   @stack('scripts')
 </body>
 </html>

@@ -35,6 +35,11 @@ return [
         'category_id' => env('CORE_CATEGORY_ID'),
     ],
 
+    // Подсказки адреса на оформлении заказа. Ключ необязателен: API отвечает и без него.
+    'nova_poshta' => [
+        'key' => env('NOVA_POSHTA_API_KEY'),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

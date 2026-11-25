@@ -72,9 +72,12 @@
             <div class="col-xl-3 col-4">
                <div class="aq-header-right-options text-end">
                   <ul>
-                     {{-- Корзина — шаг 4.4 --}}
+                     @php($cartCount = app(\App\Services\Cart::class)->count())
                      <li class="aq-header-top-cart">
-                        <a href="#" aria-label="Кошик">
+                        <a href="{{ route('cart') }}" aria-label="Кошик">
+                           @if ($cartCount)
+                              <span class="count-box">{{ $cartCount }}</span>
+                           @endif
                            <i>
                               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="21" viewBox="0 0 20 21" fill="none"><path d="M5.48681 5.07041C5.48681 2.68433 7.4211 0.750039 9.80717 0.750039C10.9562 0.74517 12.0598 1.1982 12.874 2.00895C13.6882 2.81971 14.1459 3.92139 14.1458 5.07041M6.84107 9.57384H6.88684M12.6721 9.57388H12.7179M5.62368 19.972H13.9715C17.0379 19.972 19.3903 18.8645 18.7221 14.4068L17.944 8.3656C17.5321 6.14134 16.1134 5.29008 14.8685 5.29008H4.69004C3.42688 5.29008 2.0905 6.20542 1.61453 8.3656L0.836493 14.4068C0.268988 18.361 2.55732 19.972 5.62368 19.972Z" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                            </i>

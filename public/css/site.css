@@ -17,3 +17,52 @@
 .aq-product-details-add-to-cart-btn button:disabled { opacity: .6; cursor: not-allowed; }
 /* На телефоне миниатюры галереи съедают экран — листаем стрелками большого фото */
 @media (max-width: 1199px) { .product-slider-nav { display: none; } }
+
+/* Сообщения и ошибки форм */
+.site-alert { padding: 12px 16px; border-radius: 6px; }
+.site-alert-success { background: #ecfdf3; color: #067647; }
+.site-alert-error { background: #fef3f2; color: #b42318; }
+.site-field-error { color: #b42318; font-size: 14px; margin: 6px 0 0; }
+.site-note { color: #555; font-size: 14px; margin: 0; }
+
+/* Карточка товара: кнопка «До кошика» прижата к низу, чтобы в ряду кнопки стояли на одной линии */
+.aq-product-main { height: calc(100% - 15px); }
+.aq-product-main .aq-product-content { flex-grow: 1; display: flex; flex-direction: column; }
+.site-card-form { margin-top: auto; padding-top: 10px; }
+.site-card-buy { width: 100%; padding: 8px 12px; border: 1px solid #111; border-radius: 4px; background: #fff; color: #111; font-size: 14px; font-weight: 500; transition: .2s; }
+.site-card-buy:hover { background: #111; color: #fff; }
+
+/* Корзина */
+.site-cart-unavailable .aq-cart-img img { opacity: .4; }
+.aq-cart-title .site-out-of-stock { font-size: 14px; margin-top: 4px; }
+
+/* Оформление заказа */
+.site-radio-row { display: flex; gap: 24px; flex-wrap: wrap; }
+.site-radio { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 400; }
+.site-radio input { width: auto; height: auto; }
+.site-payment-note { font-size: 14px; color: #555; margin: 4px 0 0 26px; }
+.aq-checkout-btn-wrapper button { border: 0; }
+/* шаблон пишет каждое слово в полях с большой буквы («Київська Обл.») — показываем как ввели */
+.aq-checkout-input input, .aq-checkout-input textarea { text-transform: none; }
+.aq-order-info-list-desc { gap: 16px; }
+.aq-order-info-list-desc > span { white-space: nowrap; }
+
+/* Страница «Дякуємо» */
+.site-payment-box { padding: 16px 20px; border: 1px solid #e5e5e5; border-radius: 6px; background: #fafafa; }
+.site-pre { white-space: pre-line; }
+
+/* Корзина: в шаблоне на экранах до 1199px таблица шириной 840px с прокруткой вбок — цена, количество
+   и «Видалити» прятались за краем. Таблица — по ширине колонки, на телефоне строка складывается:
+   фото слева, справа название, цена, количество, «Видалити». */
+.aq-cart-list { overflow-x: visible; }
+.aq-cart-list table { width: 100%; }
+@media (max-width: 767px) {
+   .aq-cart-list thead { display: none; }
+   .aq-cart-list tbody { display: block; }
+   .aq-cart-list tbody tr { display: grid; grid-template-columns: 80px 1fr; column-gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--aq-gray-5); }
+   .aq-cart-list .table > :not(caption) > * > * { padding: 0; border: 0; }
+   .aq-cart-list tr td.aq-cart-title { padding: 0; }
+   .aq-cart-list .aq-cart-img { grid-row: 1 / span 4; }
+   .aq-cart-list .aq-cart-img img { width: 80px; }
+   .aq-cart-list .aq-cart-action { text-align: start !important; }
+}

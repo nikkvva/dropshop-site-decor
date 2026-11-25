@@ -117,26 +117,31 @@
                      </div>
                   @endif
 
-                  {{-- Корзина — шаг 4.4: пока кнопка неактивна --}}
-                  <div class="aq-product-details-action-wrapper mb-25">
+                  @if (session('error'))
+                     <p class="site-alert site-alert-error mb-15">{{ session('error') }}</p>
+                  @endif
+                  <form class="aq-product-details-action-wrapper mb-25" method="POST" action="{{ route('cart.add', $product) }}">
+                     @csrf
                      <div class="aq-product-details-action-item-wrapper d-sm-flex align-items-center">
-                        <div class="aq-product-details-quantity">
-                           <div class="aq-product-quantity mb-10 mr-10">
-                              <span class="aq-cart-minus"><svg width="11" height="2" viewBox="0 0 11 2" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1H10" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
-                              <input class="aq-cart-input" type="text" value="1" aria-label="Кількість">
-                              <span class="aq-cart-plus"><svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 6H10M5.5 1.5V10.5" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+                        @if ($product->is_available)
+                           <div class="aq-product-details-quantity">
+                              <div class="aq-product-quantity mb-10 mr-10">
+                                 <span class="aq-cart-minus"><svg width="11" height="2" viewBox="0 0 11 2" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1H10" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+                                 <input class="aq-cart-input" type="text" inputmode="numeric" name="quantity" value="1" aria-label="Кількість">
+                                 <span class="aq-cart-plus"><svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 6H10M5.5 1.5V10.5" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+                              </div>
                            </div>
-                        </div>
+                        @endif
                         <div class="aq-product-details-add-to-cart-btn w-100 mb-10">
-                           <button class="aq-btn-black btn-square w-100" disabled>{{ $product->is_available ? 'До кошика' : 'Немає в наявності' }}</button>
+                           <button type="submit" class="aq-btn-black btn-square w-100" @disabled(! $product->is_available)>{{ $product->is_available ? 'До кошика' : 'Немає в наявності' }}</button>
                         </div>
                      </div>
-                  </div>
+                  </form>
 
                   <div class="aq-product-details-mesg-wrap">
                      <ul>
                         <li><div class="aq-product-details-mesg"><span><label>Доставка:</label> Новою поштою по всій Україні, відправка за 1–3 робочі дні.</span></div></li>
-                        <li><div class="aq-product-details-mesg"><span><label>Оплата:</label> при отриманні, без передоплати.</span></div></li>
+                        <li><div class="aq-product-details-mesg"><span><label>Оплата:</label> при отриманні або передоплата на картку.</span></div></li>
                         <li><div class="aq-product-details-mesg"><span><label>Повернення:</label> протягом 14 днів, якщо товар не використовувався.</span></div></li>
                      </ul>
                   </div>
