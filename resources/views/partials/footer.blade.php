@@ -7,7 +7,7 @@
                <div class="col-lg-4 col-sm-6">
                   <div class="aq-footer-widget footer-col-6-1 mb-90">
                      <div class="aq-footer-logo mb-25">
-                        <a href="{{ route('home') }}"><img data-width="120" src="{{ asset('bazaro/img/logo/logo.png') }}" alt="{{ config('app.name') }}"></a>
+                        <a href="{{ route('home') }}"><img data-width="120" src="{{ \App\Models\Setting::image('logo', 'bazaro/img/logo/logo.png') }}" alt="{{ config('app.name') }}"></a>
                      </div>
                      <div class="aq-footer-contact-wrap">
                         <div class="aq-footer-contact-item d-flex align-items-start">

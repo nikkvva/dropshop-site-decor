@@ -4,7 +4,7 @@
 @section('description', 'Навушники, павербанки, зарядні пристрої та аксесуари для смартфонів. Доставка Новою поштою, оплата при отриманні.')
 
 @php
-   // Картинки слайдера и баннеров — заглушки шаблона, заменятся в админке (4.5)
+   // Картинки слайдера и баннеров меняются в админке («Картинки сайта»), здесь — заглушки шаблона
    $slides = [
       ['img' => 'slide-1', 'mobile' => 'slide-1', 'label' => 'Новинки', 'title' => 'Аксесуари <br> для вашого <br> смартфона', 'note' => 'Доставка по всій Україні'],
       ['img' => 'slide-2', 'mobile' => 'slide-2-1', 'label' => 'Звук', 'title' => 'Бездротові <br> навушники <br> на кожен день', 'note' => 'Оплата при отриманні'],
@@ -31,12 +31,12 @@
       </div>
       <div class="swiper elt-slider-active">
          <div class="swiper-wrapper">
-            @foreach ($slides as $slide)
+            @foreach ($slides as $i => $slide)
                <div class="swiper-slide">
                   <div class="elt-slider-item p-relative d-flex align-items-center">
                      <div class="elt-slider-thumb">
-                        <img class="d-none d-md-block" src="{{ asset("bazaro/img/slider/{$slide['img']}.jpg") }}" alt="">
-                        <img class="d-md-none" src="{{ asset("bazaro/img/slider/{$slide['mobile']}.jpg") }}" alt="">
+                        <img class="d-none d-md-block" src="{{ \App\Models\Setting::image('slide_'.($i + 1), "bazaro/img/slider/{$slide['img']}.jpg") }}" alt="">
+                        <img class="d-md-none" src="{{ \App\Models\Setting::image('slide_'.($i + 1).'_mobile', "bazaro/img/slider/{$slide['mobile']}.jpg") }}" alt="">
                      </div>
                      <div class="elt-slider-content z-index-1">
                         <span class="aq-section-subtitle ff-satoshi-reg mb-15">{{ $slide['label'] }}</span>
@@ -76,11 +76,11 @@
    <div class="aqf-banner-2-area elt-banner-style-3 mb-100">
       <div class="container">
          <div class="row">
-            @foreach ([['banner-3-2', 'Портативний звук', 'Колонки для дому й подорожей'], ['banner-3-1', 'Розумні годинники', 'Подарунок, який стане в пригоді']] as [$img, $label, $title])
+            @foreach ([['banner-3-2', 'Портативний звук', 'Колонки для дому й подорожей'], ['banner-3-1', 'Розумні годинники', 'Подарунок, який стане в пригоді']] as $i => [$img, $label, $title])
                <div class="col-lg-6">
                   <div class="aqf-banner-2-box p-relative mb-20">
                      <div class="aqf-banner-2-thumb">
-                        <img src="{{ asset("bazaro/img/banner/$img.jpg") }}" alt="">
+                        <img src="{{ \App\Models\Setting::image('banner_'.($i + 1), "bazaro/img/banner/$img.jpg") }}" alt="">
                      </div>
                      <div class="aqf-banner-2-content text-center">
                         <span class="aq-section-subtitle mb-15">{{ $label }}</span>

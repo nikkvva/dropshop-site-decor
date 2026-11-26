@@ -5,7 +5,7 @@
    <title>@yield('title', config('app.name'))</title>
    <meta name="description" content="@yield('description')">
    <meta name="viewport" content="width=device-width, initial-scale=1">
-   <link rel="icon" type="image/png" href="{{ asset('bazaro/img/logo/favicon.png') }}">
+   <link rel="icon" type="image/png" href="{{ \App\Models\Setting::image('favicon', 'bazaro/img/logo/favicon.png') }}">
 
    {{-- SEO: главный адрес страницы (без ?sort=...) и превью ссылки в Telegram/Viber --}}
    <link rel="canonical" href="@yield('canonical', url()->current())">
@@ -14,7 +14,7 @@
    <meta property="og:title" content="@yield('title', config('app.name'))">
    <meta property="og:description" content="@yield('description')">
    <meta property="og:url" content="@yield('canonical', url()->current())">
-   <meta property="og:image" content="@yield('og_image', asset('bazaro/img/logo/logo.png'))">
+   <meta property="og:image" content="@yield('og_image', \App\Models\Setting::image('logo', 'bazaro/img/logo/logo.png'))">
    @stack('head')
 
    @foreach (['bootstrap', 'animate', 'nice-select', 'custom-animation', 'swiper-bundle', 'slick', 'magnific-popup', 'font-awesome-pro', 'spacing', 'main'] as $css)

@@ -2,7 +2,7 @@
 <div class="aq-offcanvas-wrap">
    <div class="aq-offcanvas-top d-flex align-items-center justify-content-between">
       <div class="aq-offcanvas-logo">
-         <a href="{{ route('home') }}"><img width="115" src="{{ asset('bazaro/img/logo/logo.png') }}" alt="{{ config('app.name') }}"></a>
+         <a href="{{ route('home') }}"><img width="115" src="{{ \App\Models\Setting::image('logo', 'bazaro/img/logo/logo.png') }}" alt="{{ config('app.name') }}"></a>
       </div>
       <div class="aq-offcanvas-close">
          <span>

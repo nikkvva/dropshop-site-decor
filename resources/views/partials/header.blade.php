@@ -55,7 +55,7 @@
             </div>
             <div class="col-xl-2 col-4">
                <div class="aq-header-logo text-center text-xl-start">
-                  <a href="{{ route('home') }}"><img data-width="120" src="{{ asset('bazaro/img/logo/logo.png') }}" alt="{{ config('app.name') }}"></a>
+                  <a href="{{ route('home') }}"><img data-width="120" src="{{ \App\Models\Setting::image('logo', 'bazaro/img/logo/logo.png') }}" alt="{{ config('app.name') }}"></a>
                </div>
             </div>
             <div class="col-xl-7 d-none d-xl-block">
