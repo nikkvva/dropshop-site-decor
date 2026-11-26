@@ -95,6 +95,7 @@
                                  <div class="aq-checkout-input">
                                     <label for="delivery_point">Відділення або поштомат <span>*</span></label>
                                     <input id="delivery_point" type="text" name="delivery_point" value="{{ old('delivery_point') }}" list="np-points" autocomplete="off" required maxlength="255" placeholder="Номер або адреса">
+                                    <input type="hidden" name="delivery_point_ref" value="{{ old('delivery_point_ref') }}">
                                     <datalist id="np-points"></datalist>
                                     @error('delivery_point')<p class="site-field-error">{{ $message }}</p>@enderror
                                  </div>

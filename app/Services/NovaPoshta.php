@@ -43,7 +43,7 @@ class NovaPoshta
         });
     }
 
-    /** Все отделения города: ['Відділення №1: вул. ...', ...] */
+    /** Все отделения города: [['name' => 'Відділення №1: вул. ...', 'ref' => '...'], ...] */
     public function branches(string $cityRef): array
     {
         return $this->remember("np:branches:$cityRef", function () use ($cityRef) {
@@ -59,25 +59,66 @@ class NovaPoshta
         });
     }
 
-    /** Почтоматы города по номеру или улице (до 50). */
+    /**
+     * Почтоматы города по номеру или улице (до 50).
+     * API ищет точный кусок текста: «перемоги 18» не находит ничего. Поэтому «улица + дом» делим:
+     * в API уходит улица, из ответа оставляем дом (18 → «18», «18а», но не «185»).
+     */
     public function postomats(string $cityRef, string $query): array
     {
-        return $this->remember("np:postomats:$cityRef:".md5(mb_strtolower($query)), fn () => array_values($this->warehouses([
-            'CityRef' => $cityRef,
-            'TypeOfWarehouseRef' => self::POSTOMAT_TYPE,
-            'FindByString' => $query,
-            'Limit' => '50',
-            'Page' => '1',
-        ])));
+        return $this->remember("np:postomats:$cityRef:".md5(mb_strtolower($query)), function () use ($cityRef, $query) {
+            $house = null;
+            if (preg_match('/^(.*\pL.*?)[\s,]+(\d+\pL?)$/u', $query, $m)) {
+                [$query, $house] = [$m[1], $m[2]];
+            }
+
+            $points = $this->warehouses([
+                'CityRef' => $cityRef,
+                'TypeOfWarehouseRef' => self::POSTOMAT_TYPE,
+                'FindByString' => $query,
+                'Limit' => $house ? '500' : '50', // на одной улице почтоматов может быть больше 50
+                'Page' => '1',
+            ]);
+
+            if ($house) {
+                $points = array_filter($points, fn ($point) => preg_match('/,\s*'.preg_quote($house, '/').'(?!\d)/iu', $point['name']));
+            }
+
+            return array_slice(array_values($points), 0, 50);
+        });
     }
 
-    /** getWarehouses → ['номер-описание' => описание], только пункты выдачи. */
+    /** Пункт выдачи по Ref: ['name', 'ref', 'city_ref', 'type' => branch|postomat|null]; null — нет такого или API не ответил. */
+    public function point(string $ref): ?array
+    {
+        $point = $this->call('AddressGeneral', 'getWarehouses', ['Ref' => $ref])[0] ?? null;
+
+        if (! $point || ! in_array($point['CategoryOfWarehouse'] ?? '', self::CATEGORIES, true)) {
+            return null;
+        }
+
+        $type = match (true) {
+            in_array($point['TypeOfWarehouse'] ?? '', self::BRANCH_TYPES, true) => 'branch',
+            ($point['TypeOfWarehouse'] ?? '') === self::POSTOMAT_TYPE => 'postomat',
+            default => null,
+        };
+
+        return ['name' => $point['Description'], 'ref' => $point['Ref'], 'city_ref' => $point['CityRef'] ?? null, 'type' => $type];
+    }
+
+    /** Отвечает ли API сейчас (короткий запрос без кэша). */
+    public function available(): bool
+    {
+        return (bool) $this->call('AddressGeneral', 'getWarehouseTypes', []);
+    }
+
+    /** getWarehouses → ['номер-описание' => ['name' => описание, 'ref' => Ref]], только пункты выдачи. */
     private function warehouses(array $properties): array
     {
         $points = [];
         foreach ($this->call('AddressGeneral', 'getWarehouses', $properties) as $point) {
             if (in_array($point['CategoryOfWarehouse'] ?? '', self::CATEGORIES, true)) {
-                $points[(int) ($point['Number'] ?? 0).'-'.$point['Description']] = $point['Description'];
+                $points[(int) ($point['Number'] ?? 0).'-'.$point['Description']] = ['name' => $point['Description'], 'ref' => $point['Ref']];
             }
         }
 
@@ -91,7 +132,7 @@ class NovaPoshta
                 'apiKey' => (string) config('services.nova_poshta.key'),
                 'modelName' => $model,
                 'calledMethod' => $method,
-                'methodProperties' => $properties,
+                'methodProperties' => $properties ?: new \stdClass, // пустой массив ушёл бы как [], API ждёт {}
             ]);
         } catch (Throwable) {
             return [];
@@ -100,9 +141,11 @@ class NovaPoshta
         return $response->json('success') ? (array) $response->json('data') : [];
     }
 
-    /** Кэш на сутки, но пустой ответ (ошибка API) не кэшируем. */
+    /** Кэш на сутки, но пустой ответ (ошибка API) не кэшируем. Поменял формат ответа — подними v2, иначе сутки отдаётся старый. */
     private function remember(string $key, callable $load): array
     {
+        $key = 'v2:'.$key;
+
         if (is_array($cached = Cache::get($key))) {
             return $cached;
         }

@@ -30,18 +30,22 @@ class NovaPoshtaTest extends TestCase
         // API отвечает по типу пункта (TypeOfWarehouseRef)
         $byType = [
             '841339c7-591a-42e2-8233-7a0a00f0ed6f' => [ // поштове відділення
-                ['Number' => '10', 'CategoryOfWarehouse' => 'Branch', 'Description' => 'Відділення №10'],
-                ['Number' => '2', 'CategoryOfWarehouse' => 'Branch', 'Description' => 'Відділення №2'],
-                ['Number' => '7', 'CategoryOfWarehouse' => 'DropOff', 'Description' => 'Пункт прийому №7'],
+                ['Ref' => 'r10', 'Number' => '10', 'CategoryOfWarehouse' => 'Branch', 'Description' => 'Відділення №10'],
+                ['Ref' => 'r2', 'Number' => '2', 'CategoryOfWarehouse' => 'Branch', 'Description' => 'Відділення №2'],
+                ['Ref' => 'r7', 'Number' => '7', 'CategoryOfWarehouse' => 'DropOff', 'Description' => 'Пункт прийому №7'],
             ],
             '9a68df70-0267-42a8-bb5c-37f427e36ee4' => [ // вантажне
-                ['Number' => '1', 'CategoryOfWarehouse' => 'Branch', 'Description' => 'Відділення №1 (до 1000 кг)'],
+                ['Ref' => 'r1', 'Number' => '1', 'CategoryOfWarehouse' => 'Branch', 'Description' => 'Відділення №1 (до 1000 кг)'],
             ],
         ];
         Http::fake(fn (Request $r) => Http::response(['success' => true, 'data' => $byType[$r['methodProperties']['TypeOfWarehouseRef']]]));
 
         $this->getJson('/np/points?city_ref='.self::KYIV.'&type=branch')
-            ->assertExactJson(['Відділення №1 (до 1000 кг)', 'Відділення №2', 'Відділення №10']);
+            ->assertExactJson([
+                ['name' => 'Відділення №1 (до 1000 кг)', 'ref' => 'r1'],
+                ['name' => 'Відділення №2', 'ref' => 'r2'],
+                ['name' => 'Відділення №10', 'ref' => 'r10'],
+            ]);
 
         // повтор — из кэша, без новых запросов к API
         $this->getJson('/np/points?city_ref='.self::KYIV.'&type=branch')->assertOk();
@@ -51,16 +55,23 @@ class NovaPoshtaTest extends TestCase
     public function test_postomats_only_by_search(): void
     {
         Http::fake(['api.novaposhta.ua/*' => Http::response(['success' => true, 'data' => [
-            ['Number' => '1414', 'CategoryOfWarehouse' => 'Postomat', 'Description' => 'Поштомат №1414: вул. Назарука, 1'],
+            ['Ref' => 'p1', 'Number' => '1414', 'CategoryOfWarehouse' => 'Postomat', 'Description' => 'Поштомат №1414: вул. Назарука, 1'],
+            ['Ref' => 'p2', 'Number' => '1500', 'CategoryOfWarehouse' => 'Postomat', 'Description' => 'Поштомат №1500: вул. Назарука, 18а (біля під’їзду)'],
+            ['Ref' => 'p3', 'Number' => '1600', 'CategoryOfWarehouse' => 'Postomat', 'Description' => 'Поштомат №1600: вул. Назарука, 185'],
         ]])]);
 
         $this->getJson('/np/points?city_ref='.self::KYIV.'&type=postomat')->assertExactJson([]);
         Http::assertNothingSent(); // без текста не грузим тысячи почтоматов
 
         $this->getJson('/np/points?city_ref='.self::KYIV.'&type=postomat&q=Назарука')
-            ->assertExactJson(['Поштомат №1414: вул. Назарука, 1']);
+            ->assertJsonCount(3);
         Http::assertSent(fn (Request $r) => $r['methodProperties']['FindByString'] === 'Назарука'
             && $r['methodProperties']['TypeOfWarehouseRef'] === 'f9316480-5f2d-425d-bc2c-ac7cd29decf0');
+
+        // «улица дом»: API ищет только улицу, дом 18 — это «18а», но не «185»
+        $this->getJson('/np/points?city_ref='.self::KYIV.'&type=postomat&q='.urlencode('назарука, 18'))
+            ->assertExactJson([['name' => 'Поштомат №1500: вул. Назарука, 18а (біля під’їзду)', 'ref' => 'p2']]);
+        Http::assertSent(fn (Request $r) => $r['methodProperties']['FindByString'] === 'назарука');
     }
 
     public function test_api_error_gives_empty_list(): void

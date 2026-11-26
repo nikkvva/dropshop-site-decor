@@ -8,10 +8,12 @@
    const city = form.querySelector('[name=city]');
    const cityRef = form.querySelector('[name=city_ref]');
    const point = form.querySelector('[name=delivery_point]');
+   const pointRef = form.querySelector('[name=delivery_point_ref]');
    const cityList = document.getElementById('np-cities');
    const pointList = document.getElementById('np-points');
    const placeholders = { branch: 'Номер або адреса відділення', postomat: 'Почніть вводити номер або вулицю поштомату' };
    let refs = {}; // название из подсказки → ref города
+   let pointRefs = {}; // название пункта → ref (сервер принимает только пункт из списка)
    let cityTimer, pointTimer;
    let loadId = 0; // пришёл ответ на устаревший запрос — не показываем
 
@@ -41,12 +43,14 @@
       point.placeholder = placeholders[type()];
       if (!cityRef.value) {
          fill(pointList, []);
+         pointRefs = {};
          return;
       }
       if (type() === 'branch') point.placeholder = 'Завантажуємо список відділень…';
       const points = await getJson(form.dataset.pointsUrl + '?city_ref=' + cityRef.value + '&type=' + type() + '&q=' + encodeURIComponent(query));
       if (id !== loadId) return;
-      fill(pointList, points);
+      points.forEach((p) => { pointRefs[p.name] = p.ref; });
+      fill(pointList, points.map((p) => p.name));
       point.placeholder = placeholders[type()];
    }
 
@@ -56,6 +60,8 @@
          if (cityRef.value !== refs[city.value]) {
             cityRef.value = refs[city.value];
             point.value = '';
+            pointRef.value = '';
+            pointRefs = {};
             loadPoints();
          }
          return;
@@ -77,8 +83,9 @@
 
    // почтомат: ищем по введённому тексту (выбор из подсказки — не новый поиск)
    point.addEventListener('input', () => {
+      pointRef.value = pointRefs[point.value] || '';
       if (type() !== 'postomat' || !cityRef.value) return;
-      if ([...pointList.options].some((o) => o.value === point.value)) return;
+      if (pointRef.value) return; // выбрали из подсказки — не ищем заново
       clearTimeout(pointTimer);
       const query = point.value.trim();
       if (!query) return;
@@ -88,6 +95,7 @@
    form.querySelectorAll('[name=delivery_type]').forEach((radio) => {
       radio.addEventListener('change', () => {
          point.value = '';
+         pointRef.value = '';
          loadPoints();
       });
    });

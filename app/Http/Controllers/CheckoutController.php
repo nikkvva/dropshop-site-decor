@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Services\Cart;
 use App\Services\CoreOrderSender;
+use App\Services\NovaPoshta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 /**
  * Оформление заказа: форма → заказ у себя → сразу в dropshop-core.
@@ -26,18 +28,26 @@ class CheckoutController extends Controller
         return view('checkout', ['lines' => $lines, 'total' => Cart::total($lines)]);
     }
 
-    public function store(Request $request, Cart $cart, CoreOrderSender $sender)
+    public function store(Request $request, Cart $cart, CoreOrderSender $sender, NovaPoshta $np)
     {
+        $request->merge(['phone' => self::normalizePhone((string) $request->input('phone'))]);
+
         $data = $request->validate([
-            'customer_name' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'regex:/^[0-9+()\-\s]{10,20}$/'],
+            // минимум 2 слова из букв; внутри слова можно дефис и апостроф (Мар’яна, Кос-Анатольська)
+            'customer_name' => ['required', 'string', 'max:255', "regex:/^\pL+(?:['’ʼ-]\pL+)*(?:\s+\pL+(?:['’ʼ-]\pL+)*)+$/u"],
+            'phone' => ['required', 'string', 'regex:/^\+380\d{9}$/'],
             'email' => ['nullable', 'email', 'max:255'],
             'city' => ['required', 'string', 'max:255'],
+            'city_ref' => ['nullable', 'uuid'],
             'delivery_type' => ['required', Rule::in(array_keys(Order::DELIVERY_TYPES))],
             'delivery_point' => ['required', 'string', 'max:255'],
+            'delivery_point_ref' => ['nullable', 'uuid'],
             'payment_method' => ['required', Rule::in(array_keys(Order::PAYMENT_METHODS))],
             'comment' => ['nullable', 'string', 'max:2000'],
-        ], [], [
+        ], [
+            'customer_name.regex' => 'Вкажіть прізвище та ім’я літерами, наприклад: Петренко Іван.',
+            'phone.regex' => 'Вкажіть український номер, наприклад: +380 50 123 45 67.',
+        ], [
             'customer_name' => 'прізвище та ім’я',
             'phone' => 'телефон',
             'city' => 'місто',
@@ -46,6 +56,8 @@ class CheckoutController extends Controller
             'payment_method' => 'спосіб оплати',
             'comment' => 'коментар',
         ]);
+
+        $data = [...collect($data)->except('city_ref')->all(), ...$this->deliveryPoint($data, $np)];
 
         $lines = $cart->lines();
 
@@ -95,6 +107,36 @@ class CheckoutController extends Controller
             'order' => $order,
             'paymentDetails' => config('shop.payment_details'),
         ]);
+    }
+
+    /** «050 123 45 67», «+38 (050) 123-45-67» → «+380501234567»; не похоже на украинский номер — оставляем как есть (не пройдёт проверку). */
+    private static function normalizePhone(string $phone): string
+    {
+        $digits = preg_replace('/\D/', '', $phone);
+        if (strlen($digits) === 10 && $digits[0] === '0') {
+            $digits = '38'.$digits;
+        }
+
+        return strlen($digits) === 12 && str_starts_with($digits, '380') ? '+'.$digits : $phone;
+    }
+
+    /**
+     * Пункт выдачи только из подсказок: сверяем Ref с API (тот город, тот тип), название берём из API.
+     * API не отвечает — принимаем текст как есть, чтобы не терять заказ.
+     */
+    private function deliveryPoint(array $data, NovaPoshta $np): array
+    {
+        $point = filled($data['delivery_point_ref'] ?? null) ? $np->point($data['delivery_point_ref']) : null;
+
+        if ($point && $point['city_ref'] === ($data['city_ref'] ?? null) && $point['type'] === $data['delivery_type']) {
+            return ['delivery_point' => $point['name'], 'delivery_point_ref' => $point['ref']];
+        }
+
+        if ($np->available()) {
+            throw ValidationException::withMessages(['delivery_point' => 'Оберіть місто, а потім відділення або поштомат зі списку підказок.']);
+        }
+
+        return ['delivery_point' => $data['delivery_point'], 'delivery_point_ref' => null];
     }
 
     private function redirectIfNotReady($lines)
