@@ -10,12 +10,12 @@ class HomeController extends Controller
     public function __invoke()
     {
         // последние добавленные
-        $arrivals = Product::available()->latest('id')->limit(8)->get();
+        $arrivals = Product::available()->withPhoto()->latest('id')->limit(8)->get();
 
         return view('home', [
             'arrivals' => $arrivals,
             // самый дорогой — как «флагман» витрины; не повторяем товар из «Новинок»
-            'featured' => Product::available()->whereNotIn('id', $arrivals->pluck('id'))->orderByDesc('price')->first(),
+            'featured' => Product::available()->withPhoto()->whereNotIn('id', $arrivals->pluck('id'))->orderByDesc('price')->first(),
         ]);
     }
 }

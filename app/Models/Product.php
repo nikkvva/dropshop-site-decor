@@ -27,10 +27,19 @@ class Product extends Model
         return $query->where('is_available', true);
     }
 
-    /** Первое фото поставщика или null. */
-    public function image(): ?string
+    /**
+     * Только с фото: у поставщика новые товары бывают без фото, на витрине
+     * (главная, каталог, «Схожі», sitemap) их не показываем. Фото появится — синк подтянет.
+     */
+    public function scopeWithPhoto($query)
     {
-        return $this->pictures[0] ?? null;
+        return $query->whereJsonLength('pictures', '>', 0);
+    }
+
+    /** Первое фото поставщика или заглушка «Фото незабаром». */
+    public function image(): string
+    {
+        return $this->pictures[0] ?? asset('images/no-photo.svg');
     }
 
     /**

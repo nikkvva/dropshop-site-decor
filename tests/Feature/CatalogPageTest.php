@@ -20,6 +20,21 @@ class CatalogPageTest extends TestCase
         ], $override));
     }
 
+    public function test_products_without_photo_are_hidden_from_showcase(): void
+    {
+        $this->product(1, ['name' => 'Павербанк з фото']);
+        $this->product(2, ['name' => 'Новинка без фото', 'pictures' => []]);
+        $this->product(3, ['name' => 'Ще без фото', 'pictures' => null]);
+
+        foreach (['/', '/catalog', '/product/p-1'] as $url) {
+            $this->get($url)->assertOk()->assertDontSee('без фото');
+        }
+        $this->get('/sitemap.xml')->assertSee('p-1')->assertDontSee('p-2')->assertDontSee('p-3');
+
+        // по прямой ссылке страница открывается, вместо фото — заглушка
+        $this->get('/product/p-2')->assertOk()->assertSee('Новинка без фото')->assertSee('images/no-photo.svg');
+    }
+
     public function test_it_shows_only_available_products_with_links(): void
     {
         $this->product(1, ['name' => 'Павербанк Remax']);

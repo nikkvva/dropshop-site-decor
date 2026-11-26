@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <rect width="600" height="600" fill="#F4F4F4"/>
+  <g fill="none" stroke="#B5B5B5" stroke-width="10" stroke-linejoin="round">
+    <path d="M215 235h35l20-30h60l20 30h35a20 20 0 0 1 20 20v120a20 20 0 0 1-20 20H215a20 20 0 0 1-20-20V255a20 20 0 0 1 20-20z"/>
+    <circle cx="300" cy="315" r="45"/>
+  </g>
+  <text x="300" y="460" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" fill="#9A9A9A">Фото незабаром</text>
+</svg>

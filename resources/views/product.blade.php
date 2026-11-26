@@ -3,7 +3,7 @@
 @section('title', $product->name.' — купити за '.$product::money($product->price).' | '.config('app.name'))
 @section('description', $product->metaDescription())
 @section('og_type', 'product')
-@if ($product->image())
+@if ($product->pictures)
    @section('og_image', $product->image())
 @endif
 
@@ -78,6 +78,8 @@
                         </div>
                      </div>
                   </div>
+               @else
+                  <img src="{{ $product->image() }}" alt="{{ $product->name }}">
                @endif
             </div>
 

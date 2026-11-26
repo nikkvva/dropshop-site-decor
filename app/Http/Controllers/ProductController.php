@@ -17,7 +17,7 @@ class ProductController extends Controller
         return view('product', [
             'product' => $product,
             'variants' => $variants,
-            'related' => Product::available()
+            'related' => Product::available()->withPhoto()
                 ->where('core_category_id', $product->core_category_id)
                 ->whereKeyNot($product->id)
                 ->whereNotIn('id', $variants->pluck('id'))

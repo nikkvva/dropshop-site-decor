@@ -10,7 +10,7 @@ class SitemapController extends Controller
     public function __invoke()
     {
         return response()
-            ->view('sitemap', ['products' => Product::available()->get(['slug', 'updated_at'])])
+            ->view('sitemap', ['products' => Product::available()->withPhoto()->get(['slug', 'updated_at'])])
             ->header('Content-Type', 'application/xml');
     }
 }

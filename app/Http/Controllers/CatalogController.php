@@ -19,7 +19,7 @@ class CatalogController extends Controller
     {
         $sort = array_key_exists($request->query('sort'), self::SORTS) ? $request->query('sort') : 'new';
 
-        $query = Product::available();
+        $query = Product::available()->withPhoto();
 
         match ($sort) {
             'cheap' => $query->orderBy('price'),
