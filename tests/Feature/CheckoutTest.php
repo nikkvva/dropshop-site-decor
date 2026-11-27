@@ -112,6 +112,29 @@ class CheckoutTest extends TestCase
         $this->assertNull($order->fresh()->send_error);
     }
 
+    public function test_resend_stops_when_product_ran_out(): void
+    {
+        // сначала нет связи, потом при досылке товар уже закончился
+        Http::fake(['core.test/*' => Http::sequence()
+            ->pushFailedConnection()
+            ->push(['message' => 'Some products are out of stock.', 'unavailable' => [555]], 422)]);
+
+        $this->post('/checkout', $this->form())->assertRedirect(route('checkout.done'));
+        $this->artisan('orders:resend')->assertSuccessful();
+
+        $order = Order::sole();
+        $this->assertNull($order->core_number);
+        $this->assertNotNull($order->unavailable_at);
+
+        // следующий запуск заказ не трогает — запросов больше нет
+        $this->artisan('orders:resend')->assertSuccessful();
+        $this->assertCount(2, Http::recorded(fn (Request $r) => str_contains($r->url(), 'core.test')));
+
+        $this->actingAs(User::factory()->create())
+            ->get('/admin/orders')
+            ->assertSee('нет в наличии — позвонить');
+    }
+
     public function test_out_of_stock_in_core_returns_to_cart(): void
     {
         Http::fake(['core.test/*' => Http::response(['message' => 'Some products are out of stock.', 'unavailable' => [555]], 422)]);

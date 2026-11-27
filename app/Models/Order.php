@@ -26,6 +26,7 @@ class Order extends Model
         return [
             'total' => 'decimal:2',
             'sent_at' => 'datetime',
+            'unavailable_at' => 'datetime',
         ];
     }
 
