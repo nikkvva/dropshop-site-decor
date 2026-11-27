@@ -5,10 +5,11 @@
 ## Окружение
 - Docker, как в `dropshop-core`: все команды php, artisan, composer — через `docker compose exec app ...` из этой папки.
 - `vendor/` живёт в томе Docker, на диске его нет. Код библиотек смотреть внутри контейнера.
-- Админка: http://localhost:8081/admin · БД снаружи: localhost:3308.
+- Админка: http://localhost:8081/admin · БД снаружи: localhost:3308. Порты — `APP_PORT`, `DB_PORT_EXTERNAL` в `.env` (у каждого сайта на одном ПК свои).
 - `APP_LOCALE=uk`: сайт открытый, всё для клиента — на украинском (переводы Laravel — пакет `laravel-lang`, папка `lang/uk`).
 
 ## Что уже есть
+- Ниша сайта: тексты главной и каталога, SEO — только в `config/niche.php` (название — `APP_NAME`). В шаблоны тексты ниши не писать: сайты делаются копией заготовки и получают её исправления через `git pull upstream`.
 - Пустой Laravel 13 + Filament 5, вход в админку со строгим лимитом (`app/Filament/Auth/Login.php`, тест `tests/Feature/AdminLoginTest.php`).
 - Класс входа лежит вне `app/Filament/Pages`, потому что эта папка сканируется автоматически.
 - Товары: `php artisan products:sync` раз в час (контейнер `scheduler`) копирует товары категории `CORE_CATEGORY_ID` из dropshop-core в таблицу `products`. Пропавшие из категории не удаляются, а получают `is_available = false`. Пустой ответ dropshop-core — синк падает с ошибкой и ничего не меняет (иначе спрятал бы весь магазин). `slug` ставится только при создании товара: переименование у поставщика не ломает старые ссылки. Админка: раздел «Товары», только просмотр. Тест: `tests/Feature/SyncProductsTest.php`.

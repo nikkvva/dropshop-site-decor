@@ -1,15 +1,13 @@
 @extends('layouts.app')
 
-@section('title', config('app.name').' — смартфони та аксесуари з доставкою по Україні')
-@section('description', 'Навушники, павербанки, зарядні пристрої та аксесуари для смартфонів. Доставка Новою поштою, оплата при отриманні.')
+@section('title', config('app.name').' — '.config('niche.home_title'))
+@section('description', config('niche.home_description'))
 
 @php
-   // Картинки слайдера и баннеров меняются в админке («Картинки сайта»), здесь — заглушки шаблона
-   $slides = [
-      ['img' => 'slide-1', 'mobile' => 'slide-1', 'label' => 'Новинки', 'title' => 'Аксесуари <br> для вашого <br> смартфона', 'note' => 'Доставка по всій Україні'],
-      ['img' => 'slide-2', 'mobile' => 'slide-2-1', 'label' => 'Звук', 'title' => 'Бездротові <br> навушники <br> на кожен день', 'note' => 'Оплата при отриманні'],
-      ['img' => 'slide-3', 'mobile' => 'slide-3-1', 'label' => 'Енергія', 'title' => 'Павербанки <br> та зарядки <br> для дороги', 'note' => 'Обмін протягом 14 днів'],
-   ];
+   // Тексты — config/niche.php. Картинки слайдера и баннеров меняются в админке («Картинки сайта»), здесь — заглушки шаблона
+   $slidePlaceholders = [['slide-1', 'slide-1'], ['slide-2', 'slide-2-1'], ['slide-3', 'slide-3-1']];
+   $slides = collect(config('niche.slides'))->map(fn ($s, $i) => $s + ['img' => $slidePlaceholders[$i][0], 'mobile' => $slidePlaceholders[$i][1]]);
+   $banners = collect(config('niche.banners'))->map(fn ($b, $i) => [['banner-3-2', 'banner-3-1'][$i], $b['label'], $b['title']]);
    $features = [
       ['Доставка по Україні', 'Відправка за 1–3 робочі дні','<path d="M7.60001 13.6001V0.600098H22.5999V13.6001H7.60001ZM7.60001 13.6001L0.599976 13.6001V8.60011L3.59996 5.6001H7.59995L7.60001 13.6001ZM15.6 16.1001C15.6 17.4808 16.7193 18.6001 18.1 18.6001C19.4807 18.6001 20.5999 17.4808 20.5999 16.1001C20.5999 14.7194 19.4807 13.6001 18.1 13.6001C16.7193 13.6001 15.6 14.7194 15.6 16.1001ZM2.59997 16.1001C2.59997 17.4808 3.71925 18.6001 5.09996 18.6001C6.48066 18.6001 7.59995 17.4808 7.59995 16.1001C7.59995 14.7194 6.48066 13.6001 5.09996 13.6001C3.71925 13.6001 2.59997 14.7194 2.59997 16.1001Z" stroke="currentcolor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>', '0 0 24 20'],
       ['Оплата при отриманні', 'Без передоплати', '<path d="M7.24487 0.700195V24.7002M12.7 5.06348H4.51813C3.50549 5.06348 2.53432 5.46575 1.81827 6.1818C1.10222 6.89784 0.699951 7.86901 0.699951 8.88166C0.699951 9.8943 1.10222 10.8655 1.81827 11.5815C2.53432 12.2976 3.50549 12.6998 4.51813 12.6998H9.97268C10.9853 12.6998 11.9565 13.1021 12.6725 13.8182C13.3886 14.5342 13.7909 15.5054 13.7909 16.518C13.7909 17.5307 13.3886 18.5018 12.6725 19.2179C11.9565 19.9339 10.9853 20.3362 9.97268 20.3362H0.699951" stroke="currentcolor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>', '0 0 15 26'],
@@ -21,7 +19,7 @@
 
 @section('content')
 
-   <h1 class="visually-hidden">Аксесуари для смартфонів з доставкою по Україні</h1>
+   <h1 class="visually-hidden">{{ config('niche.tagline') }}</h1>
 
    {{-- Слайдер --}}
    <div class="elt-slider-area p-relative mb-60 fix">
@@ -76,7 +74,7 @@
    <div class="aqf-banner-2-area elt-banner-style-3 mb-100">
       <div class="container">
          <div class="row">
-            @foreach ([['banner-3-2', 'Портативний звук', 'Колонки для дому й подорожей'], ['banner-3-1', 'Розумні годинники', 'Подарунок, який стане в пригоді']] as $i => [$img, $label, $title])
+            @foreach ($banners as $i => [$img, $label, $title])
                <div class="col-lg-6">
                   <div class="aqf-banner-2-box p-relative mb-20">
                      <div class="aqf-banner-2-thumb">

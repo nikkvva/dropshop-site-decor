@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Каталог аксесуарів для смартфонів — '.config('app.name'))
-@section('description', 'Усі товари в наявності: навушники, павербанки, зарядні пристрої, тримачі та інші аксесуари. Доставка Новою поштою, оплата при отриманні.')
+@section('title', config('niche.catalog_title').' — '.config('app.name'))
+@section('description', config('niche.catalog_description'))
 {{-- сортировка — та же страница, поэтому в canonical её нет; номер страницы — есть --}}
 @section('canonical', route('catalog', $products->currentPage() > 1 ? ['page' => $products->currentPage()] : []))
 
@@ -17,7 +17,7 @@
             </div>
             <div class="aq-breadcrumb-content">
                <h1 class="aq-breadcrumb-title">Каталог</h1>
-               <p>Аксесуари для смартфонів з доставкою по Україні</p>
+               <p>{{ config('niche.tagline') }}</p>
             </div>
          </div>
       </div>
