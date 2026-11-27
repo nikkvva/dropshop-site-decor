@@ -25,6 +25,14 @@ class NovaPoshtaTest extends TestCase
         Http::assertSent(fn (Request $r) => $r['calledMethod'] === 'searchSettlements' && $r['methodProperties']['CityName'] === 'київ');
     }
 
+    public function test_array_query_is_not_an_error(): void
+    {
+        Http::fake();
+
+        $this->getJson('/np/cities?q[]=київ')->assertOk()->assertExactJson([]);
+        Http::assertNothingSent();
+    }
+
     public function test_branches_of_both_types_sorted_by_number(): void
     {
         // API отвечает по типу пункта (TypeOfWarehouseRef)

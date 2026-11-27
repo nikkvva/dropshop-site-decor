@@ -6,11 +6,18 @@
             @if (! $paginator->onFirstPage())
                <li><a href="{{ $paginator->previousPageUrl() }}" rel="prev" aria-label="Попередня">&larr;</a></li>
             @endif
-            @foreach ($paginator->getUrlRange(1, $paginator->lastPage()) as $page => $url)
-               @if ($page == $paginator->currentPage())
-                  <li><span class="current">{{ $page }}</span></li>
+            {{-- $elements: «1 2 … 7 8 9 … 40 41» вместо всех страниц подряд (иначе на телефоне шире экрана) --}}
+            @foreach ($elements as $element)
+               @if (is_string($element))
+                  <li><span>{{ $element }}</span></li>
                @else
-                  <li><a href="{{ $url }}">{{ $page }}</a></li>
+                  @foreach ($element as $page => $url)
+                     @if ($page == $paginator->currentPage())
+                        <li><span class="current">{{ $page }}</span></li>
+                     @else
+                        <li><a href="{{ $url }}">{{ $page }}</a></li>
+                     @endif
+                  @endforeach
                @endif
             @endforeach
             @if ($paginator->hasMorePages())

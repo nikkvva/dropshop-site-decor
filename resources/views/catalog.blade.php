@@ -56,7 +56,7 @@
                   <div class="col">@include('partials.product-card')</div>
                @endforeach
             </div>
-            <div class="mt-30">{{ $products->links('partials.pagination') }}</div>
+            <div class="mt-30">{{ $products->onEachSide(1)->links('partials.pagination') }}</div>
          @endif
       </div>
    </div>

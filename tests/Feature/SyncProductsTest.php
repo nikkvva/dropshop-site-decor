@@ -68,4 +68,32 @@ class SyncProductsTest extends TestCase
         $this->assertFalse(Product::firstWhere('core_id', 1)->is_available);
         $this->assertFalse(Product::firstWhere('core_id', 2)->is_available); // пропал из категории
     }
+
+    public function test_empty_response_changes_nothing(): void
+    {
+        Http::fake(['core.test/*' => Http::sequence()
+            ->push($this->page([$this->item(1)], 1, 1))
+            ->push($this->page([], 1, 1)),
+        ]);
+
+        $this->artisan('products:sync')->assertSuccessful();
+        $this->artisan('products:sync')->assertFailed();
+
+        $this->assertTrue(Product::firstWhere('core_id', 1)->is_available); // магазин не опустел
+    }
+
+    public function test_rename_keeps_slug(): void
+    {
+        Http::fake(['core.test/*' => Http::sequence()
+            ->push($this->page([$this->item(1)], 1, 1))
+            ->push($this->page([$this->item(1, ['name_ua' => 'Нова назва'])], 1, 1)),
+        ]);
+
+        $this->artisan('products:sync')->assertSuccessful();
+        $this->artisan('products:sync')->assertSuccessful();
+
+        $product = Product::firstWhere('core_id', 1);
+        $this->assertSame('Нова назва', $product->name);
+        $this->assertSame('paverbank-remax-1', $product->slug); // старая ссылка работает
+    }
 }

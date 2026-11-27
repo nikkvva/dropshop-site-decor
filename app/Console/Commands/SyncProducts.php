@@ -34,7 +34,7 @@ class SyncProducts extends Command
                 ->get(rtrim($config['url'], '/')."/api/categories/{$config['category_id']}/products", ['page' => $page])
                 ->throw();
 
-            foreach ($response->json('data') as $item) {
+            foreach ($response->json('data') ?? [] as $item) {
                 $this->save($item);
                 $seen[] = $item['id'];
             }
@@ -42,6 +42,13 @@ class SyncProducts extends Command
             $lastPage = $response->json('meta.last_page');
             $page++;
         } while ($page <= $lastPage);
+
+        // пустой ответ — скорее сбой в dropshop-core, чем пустая категория: не прячем весь магазин
+        if ($seen === []) {
+            $this->error('dropshop-core не вернул ни одного товара — ничего не меняю.');
+
+            return self::FAILURE;
+        }
 
         $hidden = Product::whereNotIn('core_id', $seen)->where('is_available', true)->update(['is_available' => false]);
 
@@ -54,9 +61,13 @@ class SyncProducts extends Command
     {
         $name = $item['name_ua'] ?: $item['name'];
 
-        Product::updateOrCreate(['core_id' => $item['id']], [
-            // id в конце — чтобы адрес был уникальным даже у товаров с одинаковым названием
-            'slug' => Str::slug($name, '-', 'uk').'-'.$item['id'],
+        $product = Product::firstOrNew(['core_id' => $item['id']]);
+
+        // адрес задаём один раз: поставщик переименует товар — старая ссылка (и место в Google) не сломается.
+        // id в конце — чтобы адрес был уникальным даже у товаров с одинаковым названием
+        $product->slug ??= Str::slug($name, '-', 'uk').'-'.$item['id'];
+
+        $product->fill([
             'name' => $name,
             'description' => $item['description_ua'] ?: $item['description'],
             'vendor' => $item['vendor'],
@@ -69,6 +80,6 @@ class SyncProducts extends Command
             'pictures' => $item['pictures'],
             'group_id' => $item['group_id'],
             'core_category_id' => $item['category_id'],
-        ]);
+        ])->save();
     }
 }

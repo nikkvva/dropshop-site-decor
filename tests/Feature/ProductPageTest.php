@@ -73,10 +73,12 @@ class ProductPageTest extends TestCase
         $this->product(1, ['group_id' => 'g1']);
         $this->product(2, ['group_id' => 'g1', 'name' => 'Варіант рожевий']);
         $this->product(3, ['group_id' => 'g2', 'name' => 'Чужа група']);
+        $this->product(4, ['group_id' => 'g1', 'pictures' => []]); // без фото — не показываем
 
         $this->get('/product/p-1')
             ->assertSee('Інші варіанти')
-            ->assertSee(route('product', 'p-2'));
+            ->assertSee(route('product', 'p-2'))
+            ->assertDontSee(route('product', 'p-4'));
 
         $this->get('/product/p-3')->assertDontSee('Інші варіанти');
     }

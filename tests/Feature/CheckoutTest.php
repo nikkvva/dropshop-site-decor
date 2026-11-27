@@ -131,6 +131,7 @@ class CheckoutTest extends TestCase
 
         $this->post('/checkout', $this->form(['phone' => 'abc', 'customer_name' => '', 'delivery_type' => 'courier']))
             ->assertSessionHasErrors(['phone', 'customer_name', 'delivery_type']);
+        $this->post('/checkout', $this->form(['phone' => ['1']]))->assertSessionHasErrors('phone'); // массив — ошибка поля, не 500
 
         $this->assertSame(0, Order::count());
         Http::assertNothingSent();

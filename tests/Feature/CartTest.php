@@ -36,12 +36,16 @@ class CartTest extends TestCase
             ->assertSee('<span class="count-box">4</span>', false)
             ->assertSee(route('checkout'));
 
-        // количество ограничено 1…99
-        $this->post('/cart/update', ['quantity' => [$a->id => 500, $b->id => 0]]);
+        // количество ограничено 99
+        $this->post('/cart/update', ['quantity' => [$a->id => 500]]);
         $this->assertSame([$a->id => 99, $b->id => 1], session('cart'));
 
         $this->post(route('cart.remove', $a));
         $this->assertSame([$b->id => 1], session('cart'));
+
+        // 0 в поле количества — товар убирается
+        $this->post('/cart/update', ['quantity' => [$b->id => 0]]);
+        $this->assertSame([], session('cart'));
     }
 
     public function test_unavailable_product_cannot_be_added(): void

@@ -11,7 +11,7 @@ class ProductController extends Controller
     {
         // другие цвета/варианты того же товара (поставщик связывает их через group_id)
         $variants = $product->group_id
-            ? Product::available()->where('group_id', $product->group_id)->whereKeyNot($product->id)->get()
+            ? Product::available()->withPhoto()->where('group_id', $product->group_id)->whereKeyNot($product->id)->get()
             : collect();
 
         return view('product', [

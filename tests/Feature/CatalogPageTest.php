@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Tests\TestCase;
 
 /** Каталог: только товары в наличии, сортировка, страницы; sitemap. */
@@ -59,6 +60,21 @@ class CatalogPageTest extends TestCase
         $this->get('/catalog?sort=expensive')->assertSeeInOrder(['Дорогий', 'Акційний', 'Середній', 'Дешевий']);
         // неизвестная сортировка (в т.ч. старая ?sort=discount) — не ошибка, а «новинки»
         $this->get('/catalog?sort=discount')->assertOk()->assertSeeInOrder(['Акційний', 'Дорогий', 'Дешевий']);
+        // массив вместо строки (так шлют боты) — тоже не ошибка
+        $this->get('/catalog?sort[]=cheap')->assertOk();
+    }
+
+    public function test_pagination_shows_window_not_all_pages(): void
+    {
+        // 42 страницы, открыта 20-я: соседние + края, остальное — «...» (иначе на телефоне шире экрана)
+        $html = (new LengthAwarePaginator([], 1000, 24, 20, ['path' => '/catalog']))
+            ->onEachSide(1)->links('partials.pagination')->toHtml();
+
+        foreach ([1, 2, 19, 20, 21, 41, 42] as $page) {
+            $this->assertStringContainsString('>'.$page.'<', $html);
+        }
+        $this->assertStringNotContainsString('>10<', $html);
+        $this->assertStringContainsString('...', $html);
     }
 
     public function test_it_paginates_by_24_and_keeps_sort_out_of_canonical(): void

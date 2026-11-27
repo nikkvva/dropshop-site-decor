@@ -10,7 +10,7 @@ class NovaPoshtaController extends Controller
 {
     public function cities(Request $request, NovaPoshta $np)
     {
-        $query = trim((string) $request->query('q'));
+        $query = $request->string('q', strict: true)->trim()->toString();
 
         return response()->json(mb_strlen($query) >= 2 ? $np->cities(mb_substr($query, 0, 50)) : []);
     }

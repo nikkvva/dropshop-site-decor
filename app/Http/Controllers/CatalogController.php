@@ -17,7 +17,9 @@ class CatalogController extends Controller
 
     public function __invoke(Request $request)
     {
-        $sort = array_key_exists($request->query('sort'), self::SORTS) ? $request->query('sort') : 'new';
+        // strict: ?sort[]=x (массив) превращается в пустую строку, а не в ошибку 500
+        $sort = $request->string('sort', strict: true)->toString();
+        $sort = array_key_exists($sort, self::SORTS) ? $sort : 'new';
 
         $query = Product::available()->withPhoto();
 

@@ -32,13 +32,19 @@ class Cart
         session(['cart' => $items]);
     }
 
-    /** Новые количества из формы корзины: [id товара => количество]. */
+    /** Новые количества из формы корзины: [id товара => количество]. 0 — убрать товар. */
     public function update(array $quantities): void
     {
         $items = $this->items();
 
         foreach ($quantities as $id => $quantity) {
-            if (isset($items[$id])) {
+            if (! isset($items[$id])) {
+                continue;
+            }
+
+            if ((int) $quantity <= 0) {
+                unset($items[$id]);
+            } else {
                 $items[$id] = $this->clamp((int) $quantity);
             }
         }

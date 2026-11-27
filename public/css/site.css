@@ -66,3 +66,6 @@
    .aq-cart-list .aq-cart-img img { width: 80px; }
    .aq-cart-list .aq-cart-action { text-align: start !important; }
 }
+
+/* Каталог: кнопок страниц до 13 — на узком экране переносим на вторую строку, а не растягиваем страницу вбок */
+.aq-pagination ul { flex-wrap: wrap; justify-content: center; row-gap: 6px; }

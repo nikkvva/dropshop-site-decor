@@ -30,7 +30,7 @@ class CheckoutController extends Controller
 
     public function store(Request $request, Cart $cart, CoreOrderSender $sender, NovaPoshta $np)
     {
-        $request->merge(['phone' => self::normalizePhone((string) $request->input('phone'))]);
+        $request->merge(['phone' => self::normalizePhone($request->string('phone', strict: true)->toString())]);
 
         $data = $request->validate([
             // минимум 2 слова из букв; внутри слова можно дефис и апостроф (Мар’яна, Кос-Анатольська)
