@@ -27,7 +27,7 @@
       <div class="swiper-wrapper">
          @foreach ($slides as $i => $slide)
             <div class="swiper-slide">
-               <div class="fr-hero-area fr-hero-overlay p-relative fix">
+               <div class="fr-hero-area p-relative fix">
                   <img class="fr-hero-video d-none d-md-block" src="{{ \App\Models\Setting::image('slide_'.($i + 1), "bazaro/img/slider/{$slide['img']}.jpg") }}" alt="">
                   <img class="fr-hero-video d-md-none" src="{{ \App\Models\Setting::image('slide_'.($i + 1).'_mobile', "bazaro/img/slider/{$slide['mobile']}.jpg") }}" alt="">
                   <div class="container container-1830">
