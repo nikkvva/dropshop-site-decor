@@ -1,3 +1,4 @@
+{{-- Свой вариант главной (index-furniture.html Bazaro): при git pull upstream конфликт здесь — оставлять свою версию --}}
 @extends('layouts.app')
 
 @section('title', config('app.name').' — '.config('niche.home_title'))
@@ -21,69 +22,61 @@
 
    <h1 class="visually-hidden">{{ config('niche.tagline') }}</h1>
 
-   {{-- Слайдер --}}
-   <div class="elt-slider-area p-relative mb-60 fix">
-      <div class="elt-slider-arrow">
-         <button class="aq-slider-prev" aria-label="Назад"><span><svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M5.75 10.75L0.75 5.75L5.75 0.75" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
-         <button class="aq-slider-next" aria-label="Далі"><span><svg xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M0.75 10.75L5.75 5.75L0.75 0.75" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
-      </div>
-      <div class="swiper elt-slider-active">
-         <div class="swiper-wrapper">
-            @foreach ($slides as $i => $slide)
-               <div class="swiper-slide">
-                  <div class="elt-slider-item p-relative d-flex align-items-center">
-                     <div class="elt-slider-thumb">
-                        <img class="d-none d-md-block" src="{{ \App\Models\Setting::image('slide_'.($i + 1), "bazaro/img/slider/{$slide['img']}.jpg") }}" alt="">
-                        <img class="d-md-none" src="{{ \App\Models\Setting::image('slide_'.($i + 1).'_mobile', "bazaro/img/slider/{$slide['mobile']}.jpg") }}" alt="">
-                     </div>
-                     <div class="elt-slider-content z-index-1">
-                        <span class="aq-section-subtitle ff-satoshi-reg mb-15">{{ $slide['label'] }}</span>
-                        <h3 class="aq-section-title ff-onest-bold fs-56 mb-30">{!! $slide['title'] !!}</h3>
-                        <span class="elt-slider-price mb-40">{{ $slide['note'] }}</span>
-                        <a class="aq-btn-black radius-30" href="{{ route('catalog') }}">До каталогу</a>
+   {{-- Hero: в шаблоне видео, у нас — 3 слайда с картинками из админки --}}
+   <div class="swiper dcr-hero-active">
+      <div class="swiper-wrapper">
+         @foreach ($slides as $i => $slide)
+            <div class="swiper-slide">
+               <div class="fr-hero-area fr-hero-overlay p-relative fix">
+                  <img class="fr-hero-video d-none d-md-block" src="{{ \App\Models\Setting::image('slide_'.($i + 1), "bazaro/img/slider/{$slide['img']}.jpg") }}" alt="">
+                  <img class="fr-hero-video d-md-none" src="{{ \App\Models\Setting::image('slide_'.($i + 1).'_mobile', "bazaro/img/slider/{$slide['mobile']}.jpg") }}" alt="">
+                  <div class="container container-1830">
+                     <div class="row">
+                        <div class="offset-xl-1 col-xl-11">
+                           <div class="fr-hero-info text-center p-relative z-index-2" data-bg-color="#F7F2ED">
+                              <span class="aq-section-subtitle ff-satoshi-reg mb-15 d-inline-block">{{ $slide['label'] }}</span>
+                              <h3 class="aq-section-title ff-satoshi-med fs-50 mb-20">{!! $slide['title'] !!}</h3>
+                              <p>{{ $slide['note'] }}</p>
+                              <a class="aq-btn-black btn-coffee-bg radius-30 w-100" href="{{ route('catalog') }}">До каталогу</a>
+                           </div>
+                        </div>
                      </div>
                   </div>
                </div>
-            @endforeach
-         </div>
+            </div>
+         @endforeach
       </div>
+      <div class="swiper-pagination dcr-hero-pagination"></div>
    </div>
 
    {{-- Преимущества --}}
-   <div id="delivery" class="aqf-shop-feature-ptb aqf-shop-feature-style bdr-radius pb-50">
-      <div class="container">
-         <div class="aqf-shop-feature-wrap d-flex flex-wrap justify-content-xl-between align-items-center" data-bg-color="#F9F9F9">
+   <div id="delivery" class="fr-feature-area">
+      <div class="container container-1830">
+         <div class="fr-feature-wrap d-flex justify-content-between align-items-center">
             @foreach ($features as [$title, $text, $path, $viewBox])
-               <div class="aqf-shop-feature-item d-flex align-items-center mb-30">
-                  <div class="aqf-shop-feature-icon">
-                     <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="{{ $viewBox }}" fill="none">{!! $path !!}</svg></span>
-                  </div>
-                  <div class="aqf-shop-feature-content">
-                     <h4>{{ $title }}</h4>
-                     <p>{{ $text }}</p>
-                  </div>
+               <div class="fr-feature-item" title="{{ $text }}">
+                  <i class="fr-feature-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="{{ $viewBox }}" fill="none">{!! $path !!}</svg></i>
+                  <span>{{ $title }}</span>
                </div>
             @endforeach
          </div>
       </div>
    </div>
 
-   {{-- Здесь был блок «Найкращі знижки» — убран, что ставить вместо него, решаем позже (см. CLAUDE.md, 4.6) --}}
-
    {{-- Баннеры --}}
-   <div class="aqf-banner-2-area elt-banner-style-3 mb-100">
-      <div class="container">
+   <div class="fr-project-area pt-90">
+      <div class="container container-1830">
          <div class="row">
             @foreach ($banners as $i => [$img, $label, $title])
-               <div class="col-lg-6">
-                  <div class="aqf-banner-2-box p-relative mb-20">
-                     <div class="aqf-banner-2-thumb">
-                        <img src="{{ \App\Models\Setting::image('banner_'.($i + 1), "bazaro/img/banner/$img.jpg") }}" alt="">
+               <div class="col-md-6">
+                  <div class="fr-project-item p-relative mb-30">
+                     <div class="fr-project-thumb">
+                        <img class="w-100" src="{{ \App\Models\Setting::image('banner_'.($i + 1), "bazaro/img/banner/$img.jpg") }}" alt="">
                      </div>
-                     <div class="aqf-banner-2-content text-center">
-                        <span class="aq-section-subtitle mb-15">{{ $label }}</span>
-                        <h4 class="aq-section-title ff-onest-bold fs-36 mb-25">{{ $title }}</h4>
-                        <a class="aq-btn-black radius-30" href="{{ route('catalog') }}">Дивитися</a>
+                     <div class="fr-project-content text-center">
+                        <span>{{ $label }}</span>
+                        <h4 class="aq-section-title ff-satoshi-med fs-32"><a href="{{ route('catalog') }}">{{ $title }}</a></h4>
+                        <a class="fr-project-link aq-btn-underline" href="{{ route('catalog') }}">Дивитися <span>{!! $arrow !!}</span></a>
                      </div>
                   </div>
                </div>
@@ -93,17 +86,17 @@
    </div>
 
    {{-- Новинки --}}
-   <div class="elt-arrival-area elt-arrival-style pb-120">
-      <div class="container">
-         <div class="elt-arrival-top mb-35">
-            <div class="row align-items-center">
-               <div class="col-md-6">
-                  <div class="elt-arrival-title-box text-center text-md-start">
-                     <h2 class="aq-section-title ff-onest-bold fs-36">Новинки</h2>
+   <div class="fr-product-area csm-product-style pt-90 pb-90">
+      <div class="container container-1830">
+         <div class="fr-product-top mb-50">
+            <div class="row align-items-end">
+               <div class="col-md-8">
+                  <div class="fr-product-title-box text-center text-md-start">
+                     <h2 class="aq-section-title ff-satoshi-med fs-50">Новинки</h2>
                   </div>
                </div>
-               <div class="col-md-6">
-                  <div class="elt-arrival-top-btn text-center text-md-end">
+               <div class="col-md-4">
+                  <div class="text-center text-md-end mt-20 mt-md-0">
                      <a class="aq-btn-link aq-btn-underline" href="{{ route('catalog') }}">Усі товари <span>{!! $arrow !!}</span></a>
                   </div>
                </div>
@@ -120,8 +113,8 @@
    {{-- Один товар крупно --}}
    @if ($featured)
       <div class="elt-product-watch-area mb-120">
-         <div class="container">
-            <div class="elt-product-watch-wrap fix" data-bg-color="#EEEBE5">
+         <div class="container container-1830">
+            <div class="elt-product-watch-wrap fix" data-bg-color="#EAE2D3">
                <div class="row justify-content-center align-items-center">
                   <div class="col-xxl-7 col-lg-6">
                      <div class="elt-product-watch-thumb text-center p-4">
@@ -137,7 +130,7 @@
                         <div class="aq-product-details-price-wrap mb-30">
                            <ins><span class="aq-product-details-price new-price">{{ $featured::money($featured->price) }}</span></ins>
                         </div>
-                        <a class="aq-btn-black radius-30" href="{{ route('product', $featured) }}">Детальніше</a>
+                        <a class="aq-btn-black btn-coffee-bg radius-30" href="{{ route('product', $featured) }}">Детальніше</a>
                      </div>
                   </div>
                </div>
@@ -147,3 +140,20 @@
    @endif
 
 @endsection
+
+{{-- Стили только этой главной — здесь, а не в site.css (тот общий с заготовкой) --}}
+@push('head')
+   <style>
+      @media (max-width: 767px) { .fr-feature-item { width: 100%; } }
+   </style>
+@endpush
+
+@push('scripts')
+   <script>
+      new Swiper('.dcr-hero-active', {
+         effect: 'fade', fadeEffect: { crossFade: true }, rewind: true, speed: 800,
+         autoplay: { delay: 6000 },
+         pagination: { el: '.dcr-hero-pagination', clickable: true },
+      });
+   </script>
+@endpush
