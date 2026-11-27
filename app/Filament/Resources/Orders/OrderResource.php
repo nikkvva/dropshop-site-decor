@@ -64,8 +64,10 @@ class OrderResource extends Resource
                 TextColumn::make('core_number')
                     ->label('В dropshop-core')
                     ->badge()
+                    ->getStateUsing(fn (Order $record): ?string => $record->core_number
+                        ?? ($record->unavailable_at ? 'нет в наличии — позвонить' : null))
                     ->placeholder('не отправлен')
-                    ->color('success'),
+                    ->color(fn (Order $record): string => $record->core_number ? 'success' : 'warning'),
             ])
             ->filters([
                 TernaryFilter::make('sent')

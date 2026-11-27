@@ -37,7 +37,7 @@ class CoreOrderSender
         }
 
         if ($response->successful()) {
-            $order->update(['core_number' => $response->json('number'), 'sent_at' => now(), 'send_error' => null]);
+            $order->update(['core_number' => $response->json('number'), 'sent_at' => now(), 'send_error' => null, 'unavailable_at' => null]);
 
             return self::SENT;
         }
@@ -46,7 +46,8 @@ class CoreOrderSender
             $coreIds = $response->json('unavailable');
             // не ждём часового синка: сразу снимаем эти товары с продажи на сайте
             Product::whereIn('core_id', $coreIds)->update(['is_available' => false]);
-            $order->update(['send_error' => 'Нет в наличии (id в dropshop-core): '.implode(', ', $coreIds)]);
+            // orders:resend такой заказ больше не шлёт — покупателю нужно позвонить
+            $order->update(['send_error' => 'Нет в наличии (id в dropshop-core): '.implode(', ', $coreIds), 'unavailable_at' => now()]);
 
             return self::UNAVAILABLE;
         }
